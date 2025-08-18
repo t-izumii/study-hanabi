@@ -21,7 +21,7 @@ export default function Hanabi() {
     0.1,
     1000
   );
-  camera.position.z = 100;
+  camera.position.z = 200;
 
   //
   // rendererの初期化
@@ -40,7 +40,7 @@ export default function Hanabi() {
   const fadeMaterial = new THREE.MeshBasicMaterial({
     color: 0x000000,
     transparent: true,
-    opacity: 0.1,
+    opacity: 0.01, // さらに弱いフェード効果で非常に長い残像
     depthWrite: false,
   });
   const fadePlane = new THREE.Mesh(fadeGeometry, fadeMaterial);
@@ -60,11 +60,11 @@ export default function Hanabi() {
 
     // 手動で画面をクリア
     renderer.clear();
-    
+
     // 残像効果用の背景を最初に描画
     fadePlane.visible = true;
     renderer.render(scene, camera);
-    
+
     // 残像背景を隠して花火だけを描画
     fadePlane.visible = false;
     firework.update();
