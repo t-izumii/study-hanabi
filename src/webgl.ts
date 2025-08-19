@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Firework } from "./hanabi";
 import { FIREWORK_PROBABILITY } from "./hanabi/settings";
+import { bgPlane } from "./bgPlane";
 
 export default function webgl() {
 
@@ -8,6 +9,18 @@ export default function webgl() {
   // sceneの初期化
   // -------------
   const scene = new THREE.Scene();
+
+  //
+  // ライティングの初期化
+  // -------------
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+  directionalLight.position.set(1, 1, 0.5);
+  scene.add(directionalLight);
+
+  //
+  // 背景プレーンの初期化
+  // -------------
+  const background = new bgPlane(scene);
 
   //
   // cameraの初期化
@@ -30,19 +43,6 @@ export default function webgl() {
   renderer.autoClear = false; // 自動クリアを無効化
   document.body.appendChild(renderer.domElement);
 
-  //
-  // 残像効果用の半透明背景
-  // -------------
-  const fadeGeometry = new THREE.PlaneGeometry(2, 2);
-  const fadeMaterial = new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    transparent: true,
-    opacity: 0.01, // さらに弱いフェード効果で非常に長い残像
-    depthWrite: false,
-  });
-  const fadePlane = new THREE.Mesh(fadeGeometry, fadeMaterial);
-  fadePlane.position.z = -0.1;
-  scene.add(fadePlane);
 
   //
   // 花火配列の初期化
@@ -58,16 +58,6 @@ export default function webgl() {
   function animate() {
     requestAnimationFrame(animate);
 
-    // 手動で画面をクリア
-    renderer.clear();
-
-    // 残像効果用の背景を最初に描画
-    fadePlane.visible = true;
-    renderer.render(scene, camera);
-
-    // 残像背景を隠して花火だけを描画
-    fadePlane.visible = false;
-
     // 全ての花火を更新
     for (let i = fireworks.length - 1; i >= 0; i--) {
       fireworks[i].update();
@@ -75,6 +65,24 @@ export default function webgl() {
         fireworks.splice(i, 1);
       }
     }
+
+    // 花火の状態に応じてライトの強度を変更（線形補間）
+    const baseIntensity = 0.1;
+    let totalIntensity = baseIntensity;
+    
+    for (const firework of fireworks) {
+      if (!firework.isExploded) {
+        // 打ち上げ中: 軽く明るくする
+        totalIntensity += 0.05;
+      } else {
+        // 爆発中: 爆発の進行度に応じて明るさを変化
+        const progress = firework.explodedProgress;
+        const explosionIntensity = 0.3 * (1 - progress); // 爆発直後が最も明るく、徐々に暗くなる
+        totalIntensity += explosionIntensity;
+      }
+    }
+    
+    directionalLight.intensity += (totalIntensity - directionalLight.intensity) * 0.1;
 
     renderer.render(scene, camera);
   }

@@ -19,7 +19,7 @@ export class Firework {
 
   constructor(
     scene: THREE.Scene,
-    position: THREE.Vector3 = new THREE.Vector3(((Math.random() - 0.5) * 400), 0, ((Math.random() - 0.5) * 100))
+    position: THREE.Vector3 = new THREE.Vector3(((Math.random() - 0.5) * 400), -30.0, ((Math.random() - 0.5) * 100))
   ) {
     this.#scene = scene;
     this.#position = position;
@@ -103,14 +103,14 @@ export class Firework {
 
       if (this.#material) {
         this.#material.uniforms.uOpacity.value = 1.0 - ( this.#explodedTimeAge  / this.#explodedTime);
-        this.#material.uniforms.uPointSize.value = 5.0 - ( this.#explodedTimeAge  / this.#explodedTime) * 5.0;
+        this.#material.uniforms.uPointSize.value = 3.0 - ( this.#explodedTimeAge  / this.#explodedTime) * 3.0;
       }
 
       // パーティクルの位置を速度ベクトルで更新
       const positions = this.#geometry.attributes.position.array as Float32Array;
       for (let i = 0; i < this.#particleCount; i++) {
         // 重力の影響を速度に加える
-        this.#particleVelocities[i].y -= 0.005;
+        this.#particleVelocities[i].y -= 0.001;
         
         positions[i * 3 + 0] += this.#particleVelocities[i].x;
         positions[i * 3 + 1] += this.#particleVelocities[i].y;
@@ -130,7 +130,7 @@ export class Firework {
 
     if (this.#material) {
       this.#material.uniforms.uOpacity.value = 1.0; // 爆発時に一瞬明るく
-      this.#material.uniforms.uPointSize.value = 5.0;
+      this.#material.uniforms.uPointSize.value = 3.0;
     }
 
     this.#particleVelocities = [];
@@ -146,7 +146,7 @@ export class Firework {
 
       const direction = new THREE.Vector3(x, y, z);
 
-      direction.normalize().multiplyScalar(Math.random() * 0.04 + 0.2);
+      direction.normalize().multiplyScalar(Math.random() * 0.02 + 0.1);
       this.#particleVelocities.push(direction);
     }
   }
@@ -162,5 +162,15 @@ export class Firework {
   /** 終了判定（外部から参照可能） */
   public get isFinished(): boolean {
     return this.#isFinished;
+  }
+
+  /** 爆発状態の取得 */
+  public get isExploded(): boolean {
+    return this.#isExploded;
+  }
+
+  /** 爆発してからの経過時間の取得 */
+  public get explodedProgress(): number {
+    return this.#isExploded ? this.#explodedTimeAge / this.#explodedTime : 0;
   }
 }
