@@ -15,7 +15,7 @@ export class bgPlane {
 
   #create() {
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("/src/bg.png");
+    const texture = loader.load("src/background/bg.png");
 
     const geometry = new THREE.PlaneGeometry(2000, 2000);
     const material = new THREE.MeshLambertMaterial({

@@ -1,10 +1,9 @@
 import * as THREE from "three";
 import { Firework } from "./hanabi";
 import { FIREWORK_PROBABILITY } from "./hanabi/settings";
-import { bgPlane } from "./bgPlane";
+import { bgPlane } from "./background";
 
 export default function webgl() {
-
   //
   // sceneの初期化
   // -------------
@@ -43,7 +42,6 @@ export default function webgl() {
   renderer.autoClear = false; // 自動クリアを無効化
   document.body.appendChild(renderer.domElement);
 
-
   //
   // 花火配列の初期化
   // -------------
@@ -69,7 +67,7 @@ export default function webgl() {
     // 花火の状態に応じてライトの強度を変更（線形補間）
     const baseIntensity = 0.1;
     let totalIntensity = baseIntensity;
-    
+
     for (const firework of fireworks) {
       if (!firework.isExploded) {
         // 打ち上げ中: 軽く明るくする
@@ -81,8 +79,9 @@ export default function webgl() {
         totalIntensity += explosionIntensity;
       }
     }
-    
-    directionalLight.intensity += (totalIntensity - directionalLight.intensity) * 0.1;
+
+    directionalLight.intensity +=
+      (totalIntensity - directionalLight.intensity) * 0.1;
 
     renderer.render(scene, camera);
   }
