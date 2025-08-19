@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export class bgPlane {
+export class BgPlane {
   #scene: THREE.Scene;
   #mesh: THREE.Mesh | null = null;
 
