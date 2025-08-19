@@ -1,8 +1,8 @@
 // エントリーポイント：外部に公開するクラスをexport
-export { Firework } from "./core/firework";
-export { ParticleSystem } from "./core/particleSystem";
-export { FireworkRenderer } from "./core/fireworkRenderer";
-export { ResourceManager } from "./core/resourceManager";
+export { Firework } from "./core/Firework";
+export { ParticleSystem } from "./core/ParticleSystem";
+export { FireworkRenderer } from "./core/FireworkRenderer";
+export { ResourceManager } from "./core/ResourceManager";
 
 // 型定義と定数もexport
 export * from "./types";

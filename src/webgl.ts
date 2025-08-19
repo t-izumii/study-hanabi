@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { Firework } from "./hanabi";
-import { FIREWORK_PROBABILITY } from "./hanabi/settings";
 import { bgPlane } from "./background";
 
 export default function webgl() {
@@ -75,8 +74,8 @@ export default function webgl() {
       } else {
         // 爆発中: 爆発の進行度に応じて明るさを変化
         const progress = firework.explodedProgress;
-        const explosionIntensity = 0.3 * (1 - progress); // 爆発直後が最も明るく、徐々に暗くなる
-        totalIntensity += explosionIntensity;
+        const explosionIntensity = 1 - progress; // 爆発直後が最も明るく、徐々に暗くなる
+        totalIntensity += explosionIntensity * 0.3;
       }
     }
 
