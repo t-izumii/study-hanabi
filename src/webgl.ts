@@ -19,7 +19,7 @@ export default function webgl() {
   //
   // 背景プレーンの初期化
   // -------------
-  const bgPlane = new BgPlane(scene);
+  new BgPlane(scene);
 
   // リフレクションは後で初期化（テクスチャが必要）
   let reflection: Reflection;

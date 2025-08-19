@@ -39,7 +39,7 @@ export const ResourceManager = {
       // 各属性を個別に廃棄
       Object.keys(geometry.attributes).forEach(key => {
         const attribute = geometry.attributes[key];
-        if (attribute && typeof attribute.dispose === 'function') {
+        if (attribute && 'dispose' in attribute && typeof attribute.dispose === 'function') {
           attribute.dispose();
         }
       });
@@ -59,8 +59,8 @@ export const ResourceManager = {
     
     try {
       // テクスチャがある場合は廃棄
-      if ('map' in material && material.map) {
-        material.map.dispose();
+      if ('map' in material && material.map && typeof (material.map as any).dispose === 'function') {
+        (material.map as any).dispose();
       }
       
       // マテリアル本体を廃棄
@@ -149,9 +149,9 @@ export const ResourceManager = {
    * 強制的にガベージコレクションを提案（開発用）
    */
   suggestGarbageCollection(): void {
-    if (typeof global !== 'undefined' && global.gc) {
+    if (typeof globalThis !== 'undefined' && (globalThis as any).gc) {
       try {
-        global.gc();
+        (globalThis as any).gc();
         console.log('Garbage collection executed');
       } catch (error) {
         console.warn('Garbage collection failed:', error);

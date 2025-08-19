@@ -17,7 +17,7 @@
 
 import * as THREE from "three";
 import { RENDERING, PARTICLE } from "../constants";
-import { FireworkUniforms } from "../types";
+import type { FireworkUniforms } from "../types";
 import fragmentShader from "../glsl/fragmentShader.glsl";
 import vertexShader from "../glsl/vertexShader.glsl";
 

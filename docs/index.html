@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+    <script type="module" crossorigin src="/assets/index-D-fatv80.js"></script>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 100vw;
+      position: relative;
+      overflow-x: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .box {
+      /* debug */
+      /* background-color: blue; */
+      /* opacity: 0; */
+    }
+
+    .box-1 {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+  <body>
+    <div id="app"></div>
+    <div class="relative">
+      <div class="box box-1" data-webgl></div>
+    </div>
+
+  </body>
+</html>
