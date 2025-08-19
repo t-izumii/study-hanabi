@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Firework } from "./hanabi";
-import { bgPlane } from "./background";
+import { BgPlane } from "./background";
+import { Reflection } from "./reflection";
 
 export default function webgl() {
   //
@@ -18,7 +19,10 @@ export default function webgl() {
   //
   // 背景プレーンの初期化
   // -------------
-  const background = new bgPlane(scene);
+  const bgPlane = new BgPlane(scene);
+
+  // リフレクションは後で初期化（テクスチャが必要）
+  let reflection: Reflection;
 
   //
   // cameraの初期化
@@ -42,6 +46,19 @@ export default function webgl() {
   document.body.appendChild(renderer.domElement);
 
   //
+  // リフレクション用レンダーターゲットの初期化
+  // -------------
+  const reflectionRenderTarget = new THREE.WebGLRenderTarget(
+    window.innerWidth,
+    window.innerHeight,
+    {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+    }
+  );
+
+  //
   // 花火配列の初期化
   // -------------
   const fireworks: Firework[] = [];
@@ -54,6 +71,8 @@ export default function webgl() {
 
   function animate() {
     requestAnimationFrame(animate);
+
+    const time = performance.now() * 0.001; // 秒単位の時間
 
     // 全ての花火を更新
     for (let i = fireworks.length - 1; i >= 0; i--) {
@@ -82,6 +101,41 @@ export default function webgl() {
     directionalLight.intensity +=
       (totalIntensity - directionalLight.intensity) * 0.1;
 
+    // 花火シーンをリフレクション用テクスチャにレンダリング
+    // リフレクションオブジェクトを一時的に非表示にして花火だけレンダリング
+    if (reflection && reflection.mesh) {
+      reflection.mesh.visible = false;
+    }
+
+    // カメラを反転させてリフレクション効果を作成
+    const originalY = camera.position.y;
+    camera.position.y = -camera.position.y;
+    camera.lookAt(0, 0, 0);
+
+    renderer.setRenderTarget(reflectionRenderTarget);
+    renderer.render(scene, camera);
+
+    // カメラ位置を元に戻す
+    camera.position.y = originalY;
+    camera.lookAt(0, 0, 0);
+
+    // リフレクションが初期化されていない場合は初期化
+    if (!reflection) {
+      reflection = new Reflection(scene, reflectionRenderTarget.texture);
+      reflection.setTextureOffset(0, -0.2);
+      reflection.setTextureScale(0.8, 0.8);
+    }
+
+    // リフレクションの時間を更新（波のアニメーション用）
+    reflection.updateTime(time);
+
+    // リフレクションオブジェクトを再表示
+    if (reflection.mesh) {
+      reflection.mesh.visible = true;
+    }
+
+    // Step 2: 通常のシーンレンダリング
+    renderer.setRenderTarget(null);
     renderer.render(scene, camera);
   }
 
