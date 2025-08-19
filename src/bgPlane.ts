@@ -14,13 +14,9 @@ export class bgPlane {
   }
 
   #create() {
-    // テクスチャを読み込み
     const loader = new THREE.TextureLoader();
-    
-    // 成功・失敗のコールバックを追加してデバッグ
-    const texture = loader.load('/src/bg.png');
+    const texture = loader.load("/src/bg.png");
 
-    // 大きなプレーンジオメトリを作成（画面全体をカバー）
     const geometry = new THREE.PlaneGeometry(2000, 2000);
     const material = new THREE.MeshLambertMaterial({
       map: texture,
@@ -28,10 +24,8 @@ export class bgPlane {
     });
 
     this.#mesh = new THREE.Mesh(geometry, material);
-    this.#mesh.position.z = -500; // 背景として後ろに配置
+    this.#mesh.position.z = -500;
     this.#scene.add(this.#mesh);
-    
-    console.log('背景プレーン作成完了:', this.#mesh);
   }
 
   dispose() {

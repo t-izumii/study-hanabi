@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import fragmentShader from "./glsl/fragmentShader.glsl";
+import vertexShader from "./glsl/vertexShader.glsl";
 
 export class Firework {
   #velocity: THREE.Vector3;
@@ -63,25 +65,8 @@ export class Firework {
         uOpacity: { value: 1.0 },
         uPointSize: { value: 3.0 },
       },
-      vertexShader: `
-        uniform vec3 uColor;
-        uniform float uPointSize;
-        varying vec3 vColor;
-        void main() {
-          vColor = uColor;
-          gl_PointSize = uPointSize;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uOpacity;
-        varying vec3 vColor;
-        void main() {
-          float dist = length(gl_PointCoord - vec2(0.5));
-          if (dist > 0.5) discard; // 丸い点にする
-          gl_FragColor = vec4(vColor, uOpacity);
-        }
-      `,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
     });
 
     this.#points = new THREE.Points(this.#geometry, this.#material);
