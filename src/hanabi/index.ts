@@ -16,6 +16,7 @@ export class Firework {
   #scene: THREE.Scene;
   #position: THREE.Vector3;
   #isFinished: boolean = false;
+  #positionsArray: Float32Array | null = null;
 
   constructor(
     scene: THREE.Scene,
@@ -86,6 +87,9 @@ export class Firework {
     this.#points = new THREE.Points(this.#geometry, this.#material);
     this.#points.position.set = this.#position;
     this.#scene.add(this.#points);
+    
+    // positions配列の参照をキャッシュ
+    this.#positionsArray = positions;
   }
 
   /** 毎フレーム更新処理（上昇→爆発→減衰→消滅の状態管理） */
@@ -110,18 +114,26 @@ export class Firework {
           3.0 - (this.#explodedTimeAge / this.#explodedTime) * 3.0;
       }
 
-      // パーティクルの位置を速度ベクトルで更新
-      const positions = this.#geometry.attributes.position
-        .array as Float32Array;
+      // パーティクルの位置を速度ベクトルで更新（最適化版）
+      if (!this.#positionsArray) return;
+      
+      // 重力値を定数として事前計算
+      const gravity = -0.001;
+      
+      // キャッシュされた配列を使用してメモリアクセスを最適化
+      let idx = 0;
       for (let i = 0; i < this.#particleCount; i++) {
+        const velocity = this.#particleVelocities[i];
+        
         // 重力の影響を速度に加える
-        this.#particleVelocities[i].y -= 0.001;
+        velocity.y += gravity;
 
-        positions[i * 3 + 0] += this.#particleVelocities[i].x;
-        positions[i * 3 + 1] += this.#particleVelocities[i].y;
-        positions[i * 3 + 2] += this.#particleVelocities[i].z;
+        // 位置更新（インデックス計算を最小化）
+        this.#positionsArray[idx++] += velocity.x;
+        this.#positionsArray[idx++] += velocity.y;
+        this.#positionsArray[idx++] += velocity.z;
       }
-      this.#geometry.attributes.position.needsUpdate = true;
+      this.#geometry!.attributes.position.needsUpdate = true;
 
       if (this.#explodedTimeAge > this.#explodedTime) {
         this.#dispose();
