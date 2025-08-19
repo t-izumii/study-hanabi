@@ -21,7 +21,7 @@ export class Firework {
   constructor(
     scene: THREE.Scene,
     position: THREE.Vector3 = new THREE.Vector3(
-      (Math.random() - 0.5) * 400,
+      (Math.random() - 0.5) * 200,
       -30.0,
       (Math.random() - 0.5) * 100
     )
@@ -33,7 +33,7 @@ export class Firework {
 
     this.#color = new THREE.Color(Math.random(), Math.random(), Math.random());
     this.#particleCount = Math.floor(Math.random() * 80) + 300;
-    this.#upTime = Math.floor(Math.random() * 10) + 100;
+    this.#upTime = Math.floor(Math.random() * 10) + 80;
     this.#explodedTime = Math.floor(Math.random() * 10) + 300;
 
     this.#create();
@@ -87,7 +87,7 @@ export class Firework {
     this.#points = new THREE.Points(this.#geometry, this.#material);
     this.#points.position.set = this.#position;
     this.#scene.add(this.#points);
-    
+
     // positions配列の参照をキャッシュ
     this.#positionsArray = positions;
   }
@@ -116,15 +116,15 @@ export class Firework {
 
       // パーティクルの位置を速度ベクトルで更新（最適化版）
       if (!this.#positionsArray) return;
-      
+
       // 重力値を定数として事前計算
       const gravity = -0.001;
-      
+
       // キャッシュされた配列を使用してメモリアクセスを最適化
       let idx = 0;
       for (let i = 0; i < this.#particleCount; i++) {
         const velocity = this.#particleVelocities[i];
-        
+
         // 重力の影響を速度に加える
         velocity.y += gravity;
 
