@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import Texture from "./bg.png";
 
 export class BgPlane {
   #scene: THREE.Scene;
@@ -15,7 +16,7 @@ export class BgPlane {
 
   #create() {
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("src/background/bg.png");
+    const texture = loader.load(Texture);
 
     const geometry = new THREE.PlaneGeometry(2000, 2000);
     const material = new THREE.MeshLambertMaterial({
