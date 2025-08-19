@@ -4,6 +4,11 @@ import { BgPlane } from "./background";
 import { Reflection } from "./reflection";
 
 export default function webgl() {
+  const view = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
   //
   // sceneの初期化
   // -------------
@@ -29,7 +34,7 @@ export default function webgl() {
   // -------------
   const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    view.width / view.height,
     0.1,
     1000
   );
@@ -41,7 +46,7 @@ export default function webgl() {
   const renderer = new THREE.WebGLRenderer({
     alpha: false,
   });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(view.width, view.height);
   renderer.autoClear = false; // 自動クリアを無効化
   document.body.appendChild(renderer.domElement);
 
@@ -49,8 +54,8 @@ export default function webgl() {
   // リフレクション用レンダーターゲットの初期化
   // -------------
   const reflectionRenderTarget = new THREE.WebGLRenderTarget(
-    window.innerWidth,
-    window.innerHeight,
+    view.width,
+    view.height,
     {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
@@ -68,6 +73,21 @@ export default function webgl() {
     e.preventDefault();
     const firework = new Firework(scene);
     fireworks.push(firework);
+  });
+
+  window.addEventListener("resize", () => {
+    view.width = window.innerWidth;
+    view.height = window.innerHeight;
+    
+    // カメラのアスペクト比を更新
+    camera.aspect = view.width / view.height;
+    camera.updateProjectionMatrix();
+    
+    // レンダラーのサイズを更新
+    renderer.setSize(view.width, view.height);
+    
+    // リフレクション用レンダーターゲットのサイズを更新
+    reflectionRenderTarget.setSize(view.width, view.height);
   });
 
   function animate() {
