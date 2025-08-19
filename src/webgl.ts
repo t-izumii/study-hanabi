@@ -64,7 +64,8 @@ export default function webgl() {
   const fireworks: Firework[] = [];
 
   // クリックで花火を作成
-  window.addEventListener("click", () => {
+  window.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
     const firework = new Firework(scene);
     fireworks.push(firework);
   });
