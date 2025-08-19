@@ -1,3 +1,3 @@
-import Hanabi from './hanabi'
+import webgl from './webgl'
 
-Hanabi();
+webgl();
