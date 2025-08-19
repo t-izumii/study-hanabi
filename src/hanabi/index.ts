@@ -19,14 +19,16 @@ export class Firework {
 
   constructor(
     scene: THREE.Scene,
-    position: THREE.Vector3 = new THREE.Vector3(((Math.random() - 0.5) * 400), -30.0, ((Math.random() - 0.5) * 100))
+    position: THREE.Vector3 = new THREE.Vector3(
+      (Math.random() - 0.5) * 400,
+      -30.0,
+      (Math.random() - 0.5) * 100
+    )
   ) {
     this.#scene = scene;
     this.#position = position;
 
-    this.#velocity = new THREE.Vector3(
-      0,0,0
-    );
+    this.#velocity = new THREE.Vector3(0, 0, 0);
 
     this.#color = new THREE.Color(Math.random(), Math.random(), Math.random());
     this.#particleCount = Math.floor(Math.random() * 80) + 300;
@@ -92,7 +94,7 @@ export class Firework {
 
     if (!this.#isExploded) {
       this.#upAge++;
-      this.#points.position.y =   this.#upAge ;
+      this.#points.position.y = this.#upAge;
 
       if (this.#upAge > this.#upTime) {
         this.#explode();
@@ -102,23 +104,26 @@ export class Firework {
       this.#explodedTimeAge++;
 
       if (this.#material) {
-        this.#material.uniforms.uOpacity.value = 1.0 - ( this.#explodedTimeAge  / this.#explodedTime);
-        this.#material.uniforms.uPointSize.value = 3.0 - ( this.#explodedTimeAge  / this.#explodedTime) * 3.0;
+        this.#material.uniforms.uOpacity.value =
+          1.0 - this.#explodedTimeAge / this.#explodedTime;
+        this.#material.uniforms.uPointSize.value =
+          3.0 - (this.#explodedTimeAge / this.#explodedTime) * 3.0;
       }
 
       // パーティクルの位置を速度ベクトルで更新
-      const positions = this.#geometry.attributes.position.array as Float32Array;
+      const positions = this.#geometry.attributes.position
+        .array as Float32Array;
       for (let i = 0; i < this.#particleCount; i++) {
         // 重力の影響を速度に加える
         this.#particleVelocities[i].y -= 0.001;
-        
+
         positions[i * 3 + 0] += this.#particleVelocities[i].x;
         positions[i * 3 + 1] += this.#particleVelocities[i].y;
         positions[i * 3 + 2] += this.#particleVelocities[i].z;
       }
       this.#geometry.attributes.position.needsUpdate = true;
 
-      if ( this.#explodedTimeAge > this.#explodedTime) {
+      if (this.#explodedTimeAge > this.#explodedTime) {
         this.#dispose();
       }
     }
