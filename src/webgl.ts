@@ -78,14 +78,14 @@ export default function webgl() {
   window.addEventListener("resize", () => {
     view.width = window.innerWidth;
     view.height = window.innerHeight;
-    
+
     // カメラのアスペクト比を更新
     camera.aspect = view.width / view.height;
     camera.updateProjectionMatrix();
-    
+
     // レンダラーのサイズを更新
     renderer.setSize(view.width, view.height);
-    
+
     // リフレクション用レンダーターゲットのサイズを更新
     reflectionRenderTarget.setSize(view.width, view.height);
   });
@@ -134,6 +134,7 @@ export default function webgl() {
     camera.lookAt(0, 0, 0);
 
     renderer.setRenderTarget(reflectionRenderTarget);
+    renderer.clear(); // 前のフレームをクリア
     renderer.render(scene, camera);
 
     // カメラ位置を元に戻す
